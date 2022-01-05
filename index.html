@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voeux 2022</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.3.3/dist/jBox.all.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.3.3/dist/jBox.all.min.css" rel="stylesheet">    
+
+    <style>
+        body{
+            margin:0px;
+        }
+        #mainSVG{
+            width: 21cm;
+            height: 59.4cm;
+        }   
+        #destValue{
+           position: absolute;
+           top: 162px;
+            left: 232px;
+            height: 80px;
+           width: 230px;
+           transform: rotate(-90deg);
+           background: transparent;
+           font-weight:bold;
+           font-size:16px;
+           line-height:1.25;
+           font-family:'Liberation Sans';
+        }
+        #expeValue{
+           position: absolute;
+           left: -164px;
+           top: 204px;
+           width: 420px;
+           height: 40px;
+           transform: rotate(90deg);
+           background: transparent;
+           font-weight:bold;
+           font-size:16px;
+           line-height:1.25;
+           font-family:'Liberation Sans';
+        }
+        
+    </style>
+
+</head>
+<body>
+<div id="haut" style="height:0px;"></div>    
+<div id="mainSVG"></div>    
+<script>
+const urlParams = new URLSearchParams(window.location.search)
+    , random = d3.randomLcg(0.9051667019185816)
+    , shuffle = d3.shuffler(random);
+
+let auto = urlParams.has('auto') ?  urlParams.get('auto') : true
+    , svg, mdDest, mdExp
+    , html = '<div class="loading">'
+        +'<img height="165px" src="asset/img/moebius.gif" />'
+        +'</div>'
+    ,mdWait = new jBox('Modal', {
+        width: 206,
+        height: 200,
+        title: 'Patience...',
+        content: html
+    })
+    ,nbRepeat = 3, curRepeat=0;
+
+mdWait.open();
+
+//charge le svg
+d3.xml('asset/svg/voeux2022.svg')
+  .then(data => {
+     d3.select("#mainSVG").node().append(data.documentElement);
+     svg=d3.select("#mainSVG").select('svg');
+    //modal pour récupèrer l'adresse
+    html = '<label for="txtDest">Saisissez les coordonnées du destinataire</label>'
+        +'<textarea id="txtDest" name="txtDest" rows="5" cols="33"></textarea>'
+        +'<button onclick="ajoutDestinataire()" type="button">Ajouter</button>'
+    mdDest = new jBox('Modal', {
+        width: 340,
+        height: 200,
+        attach: '#btnAjoutDestinataire',
+        title: 'Coordonnées du destinataire',
+        content: html
+    });
+    html = "<label for='txtExpe'>Saisissez les coordonnées de l'expéditeur</label>"
+        +'<textarea id="txtExpe" name="txtExpe" rows="5" cols="33"></textarea>'
+        +'<button onclick="changeExpediteur()" type="button">Ajouter</button>'
+    mdExp = new jBox('Modal', {
+        width: 340,
+        height: 200,
+        attach: '#btnChangeDest',
+        title: "Coordonnées de l'expéditeur",
+        content: html
+    });
+    mdWait.close();
+    document.getElementById('haut').scrollIntoView({block: "start", inline: "nearest"});
+    if(auto){
+        ajoutLogoAnnee();
+        //ajoutMesostiche();
+    }
+  });
+
+function animeMelangePhoto(){
+    masqueMelangePhoto();        
+    document.getElementById('blocMelangePhoto').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    melangePhoto();
+}
+
+function ajoutLogoAnnee(){
+    //récupère les dimensions du bloc
+    let dim = d3.select('#logoAnnee').node().getBBox();
+    //calcul l'url
+    let h = dim.width*10, w = dim.height*10, t='joyeux 2022'
+    , url = `http://localhost/A_Maze_Logo/image.html?margin=0git&responsive=1&fctEndTexte=positionneLogo&h=${h}&w=${w}&texte=${t}`;
+    console.log(url);
+    svg.append('g').attr('id','gLogoAnnee')
+    .append('foreignObject')
+        .attr('id','foLogoAnnee')
+        .attr('height',"100%").attr('width',"100%")
+        .append("xhtml:body")
+        .style("margin","0")
+            .append('iframe')
+                .attr('id','ifLogoAnnee')
+                .attr('src',url)
+                .attr("frameborder","0")
+                .attr("scrolling","no")
+                .attr('height',"100%").attr('width',"100%");
+
+    /*ajoute la fenêtre de génération de l'image 
+    let decaleX = 4;
+    svg.append('g').attr('id','gLogoAnnee')
+    .attr('transform',`translate(${decaleX},${(dim.y+dim.height)}) rotate(-90)`)
+    .append('foreignObject')
+        .attr('id','foLogoAnnee')
+        .attr('height',dim.width).attr('width',dim.height)
+        .append("xhtml:body")
+        .style("margin","0")
+            .append('iframe')
+                .attr('id','ifLogoAnnee')
+                .attr('src',url)
+                .attr("frameborder","0")
+                .attr("scrolling","no")
+                .attr('height',dim.width).attr('width',dim.height);
+    */
+}
+function positionneLogo(){
+    const t = d3.transition()
+        .duration(750)
+        .ease(d3.easeLinear)
+        .on('end',ajoutMesostiche);
+
+    let decaleX = 4;
+    //récupère les dimensions du bloc
+    let dim = d3.select('#logoAnnee').node().getBBox();
+    //positionne le bloc
+    d3.select('#gLogoAnnee').transition(t)
+        .attr('transform',`translate(${decaleX},${(dim.y+dim.height)}) rotate(-90)`)
+    //dimensionne le bloc
+    d3.select('#foLogoAnnee')
+        .attr('height',dim.width).attr('width',dim.height)
+    d3.select('#ifLogoAnnee')
+        .attr('height',dim.width).attr('width',dim.height);
+}
+function ajoutMesostiche(){
+    //récupère les dimensions du bloc
+    let dim = d3.select('#blocMeso').node().getBBox();
+    //calcul l'url
+    let h = dim.width*3, w = dim.height*3, r='MEILLEUR REVOLUTION PLANETAIRE', s=5//Victor Hugo - contemplations
+    , url = `http://localhost/mesostiche/image.html?w=${w}&h=${h}&source=${s}&regle=${r}&fctEnd=positionneMesostiche&responsive=1`;
+    console.log(url);
+    //ajoute la fenêtre de génération de l'image
+    svg.append('g').attr('id','gMeso')
+    .append('foreignObject')
+        .attr('id','foMeso')
+        .attr('height',dim.width).attr('width',dim.height)
+        .append("xhtml:body")
+        .style("margin","0")
+            .append('iframe')
+                .attr('if','ifMeso')
+                .attr('src',url)
+                .attr("frameborder","0")
+                .attr("scrolling","no")
+                .attr('height',dim.width).attr('width',dim.height);
+    /*
+    let decaleX = 25;
+    svg.append('g').attr('id','gMeso')
+    .attr('transform',`translate(${decaleX},${(dim.y+dim.height)}) rotate(-90)`)
+    .append('foreignObject')
+        .attr('id','foMeso')
+        .attr('height',dim.width).attr('width',dim.height)
+        .append("xhtml:body")
+        .style("margin","0")
+            .append('iframe')
+                .attr('src',url)
+                .attr("frameborder","0")
+                .attr("scrolling","no")
+                .attr('height',dim.width).attr('width',dim.height);
+    */
+}
+function positionneMesostiche(){
+    const t = d3.transition()
+        .duration(750)
+        .ease(d3.easeLinear)
+        .on('end',animeMelangePhoto);
+    //récupère les dimensions du bloc
+    let dim = d3.select('#blocMeso').node().getBBox();
+
+    //positionne le bloc
+    let decaleX = 25;
+    d3.select('#gMeso').transition(t)
+        .attr('transform',`translate(${decaleX},${(dim.y+dim.height)}) rotate(-90)`)
+    //dimensionne le bloc
+    d3.select('#foMeso')
+        .attr('height',dim.width).attr('width',dim.height)
+    d3.select('#ifMeso')
+        .attr('height',dim.width).attr('width',dim.height);
+}
+
+function ajoutDestinataire(){
+    //récupère les données saisies
+    let txt = document.getElementById('txtDest').value;
+    //ajoute le texte pour le destinataire
+    d3.select('#mainSVG').append('textarea')
+        .attr('id',"destValue")
+        .attr('rows',"5")
+        .attr('cols',"33")
+        .html(txt);
+    d3.select('#btnAjoutDestinataire').attr('visibility','hidden');
+    mdDest.close();
+}
+function changeExpediteur(){
+    //récupère les données saisies
+    let txt = document.getElementById('txtExpe').value;
+    //ajoute le texte pour le destinataire
+    d3.select('#mainSVG').append('textarea')
+        .attr('id',"expeValue")
+        .attr('rows',"2")
+        .attr('cols',"33")
+        .html(txt);        
+    mdExp.close();
+    d3.select('#btnChangeDest').attr('visibility','hidden');    
+}
+
+function melangePhoto(){
+    //récupère les photos
+    let photos = d3.select('#photoPatchwork').selectAll('image')
+        , newPosis = shufflePhotoPosition(photos)
+        , nbTrans = 0;
+    //met à jour les positions
+    photos.transition()
+        .delay(function(d, i) { return i * 50; })
+        .on("start", function repeat() {
+            let p = newPosis.filter(np=>np.id==this.id)[0];
+            if(p){
+                d3.active(this)
+                .transition()
+                    .duration(1000)
+                    .ease(d3.easeCubicInOut)
+                    .attr('x',p.x)
+                .transition()
+                    .duration(1000)
+                    .ease(d3.easeCubicInOut)
+                    .attr('y',p.y)                
+                .on("end", function(){
+                    nbTrans++;
+                    if(newPosis.length == nbTrans){
+                        if(nbRepeat > curRepeat){
+                            curRepeat++;
+                            melangePhoto();
+                        }else{
+                            imprimeCarte();
+                        } 
+                    }
+                })
+            }
+        });
+    /*
+    newPosis.forEach(p=>{
+        d3.select('#'+p.id).attr('x',p.x).attr('y',p.y);
+    })
+    */
+}
+function shufflePhotoPosition(photos){
+    //récupère les positions
+    let positions = []
+    photos.each(function(p, j) {
+        let n = d3.select(this);
+        positions.push({'x':Number(n.attr('x')),'y':Number(n.attr('y')),'id':n.attr('id')
+            ,'height':Number(n.attr('height')),'width':Number(n.attr('width'))});
+    });
+    //calcul les nouvelles positions
+    let newPosis=[], nbPosi=positions.length
+        , extX = d3.extent(positions.map(p=>p.x)),extY = d3.extent(positions.map(p=>p.y))
+        , curX=extX[0], curY=extY[0]; 
+    for (let i = 0; i < nbPosi; i++) {
+       let p = shuffle(positions).pop();
+       if(curX > extX[1]){
+        curX=extX[0];
+        curY+=p.height;
+       }
+       p.x = curX;
+       p.y = curY;
+       curX+=p.width;
+       //on vérifie le dépacement en Y
+       if(p.y <= extY[1])newPosis.push(p);
+    }
+    return newPosis;
+}
+
+function masqueMelangePhoto(){
+    d3.select('#blocMelangePhoto').attr('visibility','hidden');    
+}
+
+function imprimeCarte(){
+    window.print();
+}
+
+</script>
+</body>
+</html>
