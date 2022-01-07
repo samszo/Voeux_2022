@@ -196,7 +196,7 @@ function ajoutMesostiche(){
     //récupère les dimensions du bloc
     let dim = d3.select('#blocMeso').node().getBBox();
     //calcul l'url
-    let h = dim.width*3, w = dim.height*3, r='MEILLEUR REVOLUTION PLANETAIRE', s=5//Victor Hugo - contemplations
+    let h = dim.width*3, w = dim.height*3, r='MEILLEUR REVOLUTION PLANETAIRE', s=4//5//Victor Hugo - contemplations
     , url = `https://samszo.github.io/mesostiche/image.html?w=${w}&h=${h}&source=${s}&regle=${r}&fctEnd=positionneMesostiche&responsive=1`;
     console.log(url);
     //ajoute la fenêtre de génération de l'image
