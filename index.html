@@ -142,7 +142,7 @@ function ajoutLogoAnnee(){
     let dim = d3.select('#logoAnnee').node().getBBox();
     //calcul l'url
     let h = dim.width*10, w = dim.height*10, t='joyeux 2022'
-    , url = `http://localhost/A_Maze_Logo/image.html?margin=0git&responsive=1&fctEndTexte=positionneLogo&h=${h}&w=${w}&texte=${t}`;
+    , url = `https://samszo.github.io/A_Maze_Logo/image.html?margin=0git&responsive=1&fctEndTexte=positionneLogo&h=${h}&w=${w}&texte=${t}`;
     console.log(url);
     svg.append('g').attr('id','gLogoAnnee')
     .append('foreignObject')
@@ -197,7 +197,7 @@ function ajoutMesostiche(){
     let dim = d3.select('#blocMeso').node().getBBox();
     //calcul l'url
     let h = dim.width*3, w = dim.height*3, r='MEILLEUR REVOLUTION PLANETAIRE', s=5//Victor Hugo - contemplations
-    , url = `http://localhost/mesostiche/image.html?w=${w}&h=${h}&source=${s}&regle=${r}&fctEnd=positionneMesostiche&responsive=1`;
+    , url = `https://samszo.github.io/mesostiche/image.html?w=${w}&h=${h}&source=${s}&regle=${r}&fctEnd=positionneMesostiche&responsive=1`;
     console.log(url);
     //ajoute la fenêtre de génération de l'image
     svg.append('g').attr('id','gMeso')
