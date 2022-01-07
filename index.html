@@ -51,21 +51,33 @@
 <body>
 <div id="haut" style="height:0px;"></div>    
 <div id="mainSVG"></div>    
+<div id="mdctPrint" style="display: none" >
+    <p>La carte est prête !</p>
+    <p>Vous pouvez maintenant imprimer, ajouter vos messages personnels, plier et envoyer au destinataire.</p>
+    <p>Regarder un tutorial pour vous aider.</p>
+    <button onclick="window.print();" type="button">Imprimer</button>
+    <button onclick="mdPrint.close()" type="button">Annuler</button>    
+</div>
 <script>
 const urlParams = new URLSearchParams(window.location.search)
-    , random = d3.randomLcg(0.9051667019185816)
+    , random = d3.randomUniform()//d3.randomLcg(0.9051667019185816)
     , shuffle = d3.shuffler(random);
 
 let auto = urlParams.has('auto') ?  urlParams.get('auto') : true
     , svg, mdDest, mdExp
     , html = '<div class="loading">'
-        +'<img height="165px" src="asset/img/moebius.gif" />'
+        +'<p style="width:150px" >Cette carte est unique, il faut un peu de temps pour la préparer...</p>'
+        +'<img width="100%" src="asset/img/moebius.gif" />'
         +'</div>'
     ,mdWait = new jBox('Modal', {
         width: 206,
-        height: 200,
+        height: 300,
         title: 'Patience...',
         content: html
+    })
+    ,mdPrint = new jBox('Modal', {
+        title: 'Imprimer',
+        content: $('#mdctPrint')
     })
     ,nbRepeat = 3, curRepeat=0;
 
@@ -80,6 +92,7 @@ d3.xml('asset/svg/voeux2022.svg')
     html = '<label for="txtDest">Saisissez les coordonnées du destinataire</label>'
         +'<textarea id="txtDest" name="txtDest" rows="5" cols="33"></textarea>'
         +'<button onclick="ajoutDestinataire()" type="button">Ajouter</button>'
+        +'<button onclick="mdDest.close();demasque(1000,animeMelangePhoto);" type="button">Anuler</button>';
     mdDest = new jBox('Modal', {
         width: 340,
         height: 200,
@@ -90,6 +103,7 @@ d3.xml('asset/svg/voeux2022.svg')
     html = "<label for='txtExpe'>Saisissez les coordonnées de l'expéditeur</label>"
         +'<textarea id="txtExpe" name="txtExpe" rows="5" cols="33"></textarea>'
         +'<button onclick="changeExpediteur()" type="button">Ajouter</button>'
+        +'<button onclick="mdExp.close();mdDest.open();" type="button">Anuler</button>';
     mdExp = new jBox('Modal', {
         width: 340,
         height: 200,
@@ -97,15 +111,27 @@ d3.xml('asset/svg/voeux2022.svg')
         title: "Coordonnées de l'expéditeur",
         content: html
     });
-    mdWait.close();
     document.getElementById('haut').scrollIntoView({block: "start", inline: "nearest"});
     if(auto){
+        //masque les éléments de fond
+        d3.selectAll('.btnManuel').attr('visibility','hidden');
+        svg.append('rect').attr('id','masqueGlobal').attr('fill','white').attr('height','59.4cm').attr('width','21cm');
         ajoutLogoAnnee();
         //ajoutMesostiche();
     }
+    mdWait.close();
   });
+function demasque(h,cb){
+    d3.select('#masqueGlobal').transition()
+        .duration(750)
+        .ease(d3.easeLinear)
+        .attr('transform',`translate(0,${h})`)
+        .on('end',cb);
+
+}
 
 function animeMelangePhoto(){
+    d3.select('#masqueGlobal').remove();
     masqueMelangePhoto();        
     document.getElementById('blocMelangePhoto').scrollIntoView({ behavior: 'smooth', block: 'center' });
     melangePhoto();
@@ -175,6 +201,7 @@ function ajoutMesostiche(){
     console.log(url);
     //ajoute la fenêtre de génération de l'image
     svg.append('g').attr('id','gMeso')
+        .attr('transform',`translate(30, 0)`)
     .append('foreignObject')
         .attr('id','foMeso')
         .attr('height',dim.width).attr('width',dim.height)
@@ -206,7 +233,7 @@ function positionneMesostiche(){
     const t = d3.transition()
         .duration(750)
         .ease(d3.easeLinear)
-        .on('end',animeMelangePhoto);
+        .on('end',function(){mdExp.open();});
     //récupère les dimensions du bloc
     let dim = d3.select('#blocMeso').node().getBBox();
 
@@ -317,7 +344,7 @@ function masqueMelangePhoto(){
 }
 
 function imprimeCarte(){
-    window.print();
+    mdPrint.open();
 }
 
 </script>
