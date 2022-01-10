@@ -58,6 +58,24 @@
     <button onclick="window.print();" type="button">Imprimer</button>
     <button onclick="mdPrint.close()" type="button">Annuler</button>    
 </div>
+<div id="mdctChoixSource" style="display: none" >
+    <p></p>
+    <label for="sltChoixSource">Veuillez choisir une source pour le mésostiche.</label>
+
+    <select name="ChoixSource" id="sltChoixSource">
+        <option value="alea">--Aléatoire--</option>
+        <option value="alea1">J-P Balpe - Centons de Corneille</option>
+        <option value="2">J-P Balpe - Poèmes orientaux</option>
+        <option value="3">J-P Balpe - Rengas</option>
+        <option value="4">Cantiquest - Chants Joyeux</option>
+        <option value="5">Cantiquest - Chants de Victoire</option>
+        <option value="6">Victor Hugo - Contemplations</option>
+        <option value="7">Mallarmé - Poésies</option>
+        <option value="8">Arthur Rimbaud - Poésies</option>
+        <option value="8">Paul Verlaine - Amour</option>
+    </select>
+    <button onclick="chargeMesostiche();" type="button">Valider</button>
+</div>
 <script>
 const urlParams = new URLSearchParams(window.location.search)
     , random = d3.randomUniform()//d3.randomLcg(0.9051667019185816)
@@ -79,7 +97,12 @@ let auto = urlParams.has('auto') ?  urlParams.get('auto') : true
         title: 'Imprimer',
         content: $('#mdctPrint')
     })
+    ,mdChoixSource = new jBox('Modal', {
+        title: 'Choix source',
+        content: $('#mdctChoixSource')
+    })
     ,nbRepeat = 3, curRepeat=0;
+
 
 mdWait.open();
 
@@ -193,10 +216,15 @@ function positionneLogo(){
         .attr('height',dim.width).attr('width',dim.height);
 }
 function ajoutMesostiche(){
+    mdChoixSource.open();
+}
+function chargeMesostiche(){
+    let source = document.getElementById('sltChoixSource').value;    
+    mdChoixSource.close();
     //récupère les dimensions du bloc
     let dim = d3.select('#blocMeso').node().getBBox();
     //calcul l'url
-    let h = dim.width*3, w = dim.height*3, r='MEILLEUR REVOLUTION PLANETAIRE', s=d3.randomInt(0, 6)()//5//Victor Hugo - contemplations
+    let h = dim.width*3, w = dim.height*3, r='MEILLEUR REVOLUTION PLANETAIRE', s = source=='alea' ? d3.randomInt(0, 8)() : source//5//Victor Hugo - contemplations
     , url = `https://samszo.github.io/mesostiche/image.html?w=${w}&h=${h}&source=${s}&regle=${r}&fctEnd=positionneMesostiche&responsive=1`;
     console.log(url);
     //ajoute la fenêtre de génération de l'image
