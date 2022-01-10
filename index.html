@@ -114,7 +114,7 @@ d3.xml('asset/svg/voeux2022.svg')
     //modal pour récupèrer l'adresse
     html = '<label for="txtDest">Saisissez les coordonnées du destinataire</label>'
         +'<textarea id="txtDest" name="txtDest" rows="5" cols="33"></textarea>'
-        +'<button onclick="ajoutDestinataire()" type="button">Ajouter</button>'
+        +'<button onclick="ajoutDestinataire();demasque(1000,animeMelangePhoto);" type="button">Ajouter</button>'
         +'<button onclick="mdDest.close();demasque(1000,animeMelangePhoto);" type="button">Anuler</button>';
     mdDest = new jBox('Modal', {
         width: 340,
@@ -125,7 +125,7 @@ d3.xml('asset/svg/voeux2022.svg')
     });
     html = "<label for='txtExpe'>Saisissez les coordonnées de l'expéditeur</label>"
         +'<textarea id="txtExpe" name="txtExpe" rows="5" cols="33"></textarea>'
-        +'<button onclick="changeExpediteur()" type="button">Ajouter</button>'
+        +'<button onclick="changeExpediteur();mdDest.open();" type="button">Ajouter</button>'
         +'<button onclick="mdExp.close();mdDest.open();" type="button">Anuler</button>';
     mdExp = new jBox('Modal', {
         width: 340,
