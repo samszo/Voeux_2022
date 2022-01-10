@@ -161,13 +161,14 @@ function animeMelangePhoto(){
 }
 
 function ajoutLogoAnnee(){
+    d3.select('#gLogoAnnee').remove();
     //récupère les dimensions du bloc
     let dim = d3.select('#logoAnnee').node().getBBox();
     //calcul l'url
     let h = dim.width*10, w = dim.height*10, t='joyeux 2022'
     , url = `https://samszo.github.io/A_Maze_Logo/image.html?margin=0git&responsive=1&fctEndTexte=positionneLogo&h=${h}&w=${w}&texte=${t}`;
     console.log(url);
-    svg.append('g').attr('id','gLogoAnnee')
+    svg.append('g').attr('id','gLogoAnnee').on('click',ajoutLogoAnnee)
     .append('foreignObject')
         .attr('id','foLogoAnnee')
         .attr('height',"100%").attr('width',"100%")
@@ -219,6 +220,7 @@ function ajoutMesostiche(){
     mdChoixSource.open();
 }
 function chargeMesostiche(){
+    d3.select('#gMeso').remove();
     let source = document.getElementById('sltChoixSource').value;    
     mdChoixSource.close();
     //récupère les dimensions du bloc
@@ -228,7 +230,7 @@ function chargeMesostiche(){
     , url = `https://samszo.github.io/mesostiche/image.html?w=${w}&h=${h}&source=${s}&regle=${r}&fctEnd=positionneMesostiche&responsive=1`;
     console.log(url);
     //ajoute la fenêtre de génération de l'image
-    svg.append('g').attr('id','gMeso')
+    svg.append('g').attr('id','gMeso').on('click',ajoutMesostiche)
         .attr('transform',`translate(30, 0)`)
     .append('foreignObject')
         .attr('id','foMeso')
