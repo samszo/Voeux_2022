@@ -55,8 +55,10 @@
     <p>La carte est prête !</p>
     <p>Vous pouvez maintenant imprimer, ajouter vos messages personnels, plier et envoyer au destinataire.</p>
     <p>Regarder un tutorial pour vous aider.</p>
+    <!--
     <button onclick="mdPrint.close();window.print();" type="button">Imprimer</button>
-    <button onclick="mdPrint.close();" type="button">Annuler</button>    
+    -->
+    <button onclick="mdPrint.close();" type="button">OK</button>    
 </div>
 <div id="mdctChoixSource" style="display: none" >
     <p></p>
@@ -168,7 +170,7 @@ function ajoutLogoAnnee(){
     let h = dim.width*10, w = dim.height*10, t='joyeux 2022'
     , url = `https://samszo.github.io/A_Maze_Logo/image.html?margin=0git&responsive=1&fctEndTexte=positionneLogo&h=${h}&w=${w}&texte=${t}`;
     console.log(url);
-    svg.append('g').attr('id','gLogoAnnee').on('click',ajoutLogoAnnee)
+    svg.append('g').attr('id','gLogoAnnee').style('cursor','pointer').on('click',function(){ajoutLogoAnnee();})
     .append('foreignObject')
         .attr('id','foLogoAnnee')
         .attr('height',"100%").attr('width',"100%")
@@ -230,7 +232,7 @@ function chargeMesostiche(){
     , url = `https://samszo.github.io/mesostiche/image.html?w=${w}&h=${h}&source=${s}&regle=${r}&fctEnd=positionneMesostiche&responsive=1`;
     console.log(url);
     //ajoute la fenêtre de génération de l'image
-    svg.append('g').attr('id','gMeso').on('click',ajoutMesostiche)
+    svg.append('g').attr('id','gMeso').style('cursor','pointer').on('click',function(){ajoutMesostiche();})
         .attr('transform',`translate(30, 0)`)
     .append('foreignObject')
         .attr('id','foMeso')
