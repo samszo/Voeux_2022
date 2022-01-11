@@ -76,7 +76,7 @@
         <option value="8">Arthur Rimbaud - Poésies</option>
         <option value="8">Paul Verlaine - Amour</option>
     </select>
-    <button onclick="chargeMesostiche();" type="button">Valider</button>
+    <button onclick="mdChoixSource.close();" type="button">Valider</button>
 </div>
 <script>
 const urlParams = new URLSearchParams(window.location.search)
@@ -101,6 +101,7 @@ let auto = urlParams.has('auto') ?  urlParams.get('auto') : true
     })
     ,mdChoixSource = new jBox('Modal', {
         title: 'Choix source',
+        onClose:function(){chargeMesostiche();},
         content: $('#mdctChoixSource')
     })
     ,nbRepeat = 3, curRepeat=0;
@@ -116,24 +117,26 @@ d3.xml('asset/svg/voeux2022.svg')
     //modal pour récupèrer l'adresse
     html = '<label for="txtDest">Saisissez les coordonnées du destinataire</label>'
         +'<textarea id="txtDest" name="txtDest" rows="5" cols="33"></textarea>'
-        +'<button onclick="ajoutDestinataire();demasque(1000,animeMelangePhoto);" type="button">Ajouter</button>'
-        +'<button onclick="mdDest.close();demasque(1000,animeMelangePhoto);" type="button">Anuler</button>';
+        +'<button onclick="ajoutDestinataire();" type="button">Ajouter</button>'
+        +'<button onclick="mdDest.close();" type="button">Anuler</button>';
     mdDest = new jBox('Modal', {
         width: 340,
         height: 200,
         attach: '#btnAjoutDestinataire',
         title: 'Coordonnées du destinataire',
+        onClose:function(){demasque(1000,animeMelangePhoto);},
         content: html
     });
     html = "<label for='txtExpe'>Saisissez les coordonnées de l'expéditeur</label>"
         +'<textarea id="txtExpe" name="txtExpe" rows="5" cols="33"></textarea>'
-        +'<button onclick="changeExpediteur();mdDest.open();" type="button">Ajouter</button>'
-        +'<button onclick="mdExp.close();mdDest.open();" type="button">Anuler</button>';
+        +'<button onclick="changeExpediteur();" type="button">Ajouter</button>'
+        +'<button onclick="mdExp.close();" type="button">Anuler</button>';
     mdExp = new jBox('Modal', {
         width: 340,
         height: 200,
         attach: '#btnChangeDest',
         title: "Coordonnées de l'expéditeur",
+        onClose:function(){mdDest.open();},
         content: html
     });
     document.getElementById('haut').scrollIntoView({block: "start", inline: "nearest"});
@@ -224,7 +227,6 @@ function ajoutMesostiche(){
 function chargeMesostiche(){
     d3.select('#gMeso').remove();
     let source = document.getElementById('sltChoixSource').value;    
-    mdChoixSource.close();
     //récupère les dimensions du bloc
     let dim = d3.select('#blocMeso').node().getBBox();
     //calcul l'url
