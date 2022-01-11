@@ -173,7 +173,10 @@ function ajoutLogoAnnee(){
     let h = dim.width*10, w = dim.height*10, t='joyeux 2022'
     , url = `https://samszo.github.io/A_Maze_Logo/image.html?margin=0git&responsive=1&fctEndTexte=positionneLogo&h=${h}&w=${w}&texte=${t}`;
     console.log(url);
-    svg.append('g').attr('id','gLogoAnnee').style('cursor','pointer').on('click',function(){ajoutLogoAnnee();})
+    svg.append('g').attr('id','gLogoAnnee').style('cursor','pointer')
+        .on('click',function(){
+            ajoutLogoAnnee();
+        })
     .append('foreignObject')
         .attr('id','foLogoAnnee')
         .attr('height',"100%").attr('width',"100%")
