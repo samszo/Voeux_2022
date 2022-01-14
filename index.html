@@ -66,23 +66,25 @@
 
     <select name="ChoixSource" id="sltChoixSource">
         <option value="alea">--Aléatoire--</option>
-        <option value="alea1">J-P Balpe - Centons de Corneille</option>
-        <option value="2">J-P Balpe - Poèmes orientaux</option>
-        <option value="3">J-P Balpe - Rengas</option>
-        <option value="4">Cantiquest - Chants Joyeux</option>
-        <option value="5">Cantiquest - Chants de Victoire</option>
-        <option value="6">Victor Hugo - Contemplations</option>
-        <option value="7">Mallarmé - Poésies</option>
-        <option value="8">Arthur Rimbaud - Poésies</option>
+        <option value="0">J-P Balpe - Centons de Corneille</option>
+        <option value="1">J-P Balpe - Poèmes orientaux</option>
+        <option value="2">J-P Balpe - Rengas</option>
+        <option value="3">Cantiquest - Chants Joyeux</option>
+        <option value="4">Cantiquest - Chants de Victoire</option>
+        <option value="5">Victor Hugo - Contemplations</option>
+        <option value="6">Mallarmé - Poésies</option>
+        <option value="7">Arthur Rimbaud - Poésies</option>
         <option value="8">Paul Verlaine - Amour</option>
     </select>
     <button onclick="mdChoixSource.close();" type="button">Valider</button>
 </div>
 <script>
+    console.log('coucou');
 const urlParams = new URLSearchParams(window.location.search)
     , random = d3.randomUniform()//d3.randomLcg(0.9051667019185816)
-    , shuffle = d3.shuffler(random);
-
+    , shuffle = d3.shuffler(random)
+    , domain = 'https://samszo.github.io';//'http://localhost';//
+    
 let auto = urlParams.has('auto') ?  urlParams.get('auto') : true
     , svg, mdDest, mdExp
     , html = '<div class="loading">'
@@ -104,7 +106,7 @@ let auto = urlParams.has('auto') ?  urlParams.get('auto') : true
         onClose:function(){chargeMesostiche();},
         content: $('#mdctChoixSource')
     })
-    ,nbRepeat = 3, curRepeat=0;
+    ,nbRepeat = 2, curRepeat=0;
 
 
 mdWait.open();
@@ -171,12 +173,9 @@ function ajoutLogoAnnee(){
     let dim = d3.select('#logoAnnee').node().getBBox();
     //calcul l'url
     let h = dim.width*10, w = dim.height*10, t='joyeux 2022'
-    , url = `https://samszo.github.io/A_Maze_Logo/image.html?margin=0git&responsive=1&fctEndTexte=positionneLogo&h=${h}&w=${w}&texte=${t}`;
+    , url = `${domain}/A_Maze_Logo/image.html?margin=0git&responsive=1&fctEndTexte=positionneLogo&h=${h}&w=${w}&texte=${t}`;
     console.log(url);
-    svg.append('g').attr('id','gLogoAnnee').style('cursor','pointer')
-        .on('click',function(){
-            ajoutLogoAnnee();
-        })
+    svg.append('g').attr('id','gLogoAnnee')
     .append('foreignObject')
         .attr('id','foLogoAnnee')
         .attr('height',"100%").attr('width',"100%")
@@ -187,7 +186,11 @@ function ajoutLogoAnnee(){
                 .attr('src',url)
                 .attr("frameborder","0")
                 .attr("scrolling","no")
-                .attr('height',"100%").attr('width',"100%");
+                .attr('height',"100%").attr('width',"100%")
+                .style('cursor','pointer')
+                .on('click',function(){
+                    ajoutLogoAnnee();
+                });
 
     /*ajoute la fenêtre de génération de l'image 
     let decaleX = 4;
@@ -234,7 +237,7 @@ function chargeMesostiche(){
     let dim = d3.select('#blocMeso').node().getBBox();
     //calcul l'url
     let h = dim.width*3, w = dim.height*3, r='MEILLEUR REVOLUTION PLANETAIRE', s = source=='alea' ? d3.randomInt(0, 8)() : source//5//Victor Hugo - contemplations
-    , url = `https://samszo.github.io/mesostiche/image.html?w=${w}&h=${h}&source=${s}&regle=${r}&fctEnd=positionneMesostiche&responsive=1`;
+    , url = `${domain}/mesostiche/image.html?w=${w}&h=${h}&source=${s}&regle=${r}&fctEnd=positionneMesostiche&responsive=1`;
     console.log(url);
     //ajoute la fenêtre de génération de l'image
     svg.append('g').attr('id','gMeso').style('cursor','pointer').on('click',function(){ajoutMesostiche();})
